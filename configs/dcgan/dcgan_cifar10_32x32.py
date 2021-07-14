@@ -9,7 +9,7 @@ model = dict(generator=dict(out_channels=3), discriminator=dict(in_channels=3))
 
 # you must set `samples_per_gpu` and `imgs_root`
 data = dict(
-    samples_per_gpu=128,
+    samples_per_gpu=256,
     workers_per_gpu=2,
 )
 
@@ -28,11 +28,21 @@ log_config = dict(
         dict(type='TextLoggerHook'),
     ])
 
-total_iters = 5000
+total_iters = 10000
+load_from = 'work_dirs/dcgan/ckpt/iter_5000.pth' 
+# metrics = dict(
+#     ms_ssim10k=dict(type='MS_SSIM', num_images=10000),
+#     swd16k=dict(type='SWD', num_images=16384, image_shape=(3, 64, 64)))
 
 metrics = dict(
-    ms_ssim10k=dict(type='MS_SSIM', num_images=10000),
-    swd16k=dict(type='SWD', num_images=16384, image_shape=(3, 64, 64)))
+    fid50k=dict(
+        type='FID',
+        num_images=10000,
+        inception_pkl='work_dirs/inception_pkl/cifar10test.pkl',
+        bgr2rgb=True)
+    # ms_ssim10k=dict(type='MS_SSIM', num_images=10000),
+    # swd16k=dict(type='SWD', num_images=16384, image_shape=(3, 64, 64))
+    )
 
 optimizer = dict(
     generator=dict(type='Adam', lr=0.0004, betas=(0.5, 0.999)),
